@@ -106,7 +106,8 @@
 
             document.getElementById('result').innerHTML = 'Loading...';
 
-            fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=YOUR_API_KEY`)
+            // Fetch the YouTube API using the injected API key
+            fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${apiKey}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.items && data.items.length > 0) {
@@ -128,6 +129,11 @@
             const match = url.match(regExp);
             return (match && match[7].length == 11) ? match[7] : false;
         }
+    </script>
+
+    <script>
+        // This variable will be injected by GitHub Actions
+        const apiKey = ''; // API key will be injected here
     </script>
 </body>
 </html>
