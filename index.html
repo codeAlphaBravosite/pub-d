@@ -48,7 +48,7 @@
                 }
 
                 const apiKey = 'YOUR_YOUTUBE_API_KEY'; // Replace with your actual YouTube API key
-                const response = await axios.get(`https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${apiKey}`);
+                const response = await axios.get(`https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=AIzaSyBp9BsANoPrMPRvmwxJ3Wv4UhEIrrxVLMc`);
 
                 if (response.data.items && response.data.items.length > 0) {
                     const publishDate = new Date(response.data.items[0].snippet.publishedAt);
