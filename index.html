@@ -106,7 +106,7 @@
 
             document.getElementById('result').innerHTML = 'Loading...';
 
-            fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=AIzaSyAcBzCnHAwzGMexUIVHTDEdx69sfNJItr4`)
+            fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=YOUR_API_KEY`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.items && data.items.length > 0) {
