@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube Publish Date Checker</title>
+    <title>YouTube Video Publish Date Checker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.33/moment-timezone-with-data.min.js"></script>
     <style>
@@ -16,34 +17,39 @@
             font-family: 'Roboto', Arial, sans-serif;
             line-height: 1.6;
             color: #333;
-            background-color: #f9f9f9;
+            background-color: #f0f0f0;
             display: flex;
-            flex-direction: column;
-            min-height: 100vh;
+            justify-content: center;
+            align-items: center;
+            min-height: 400vh;
             padding: 20px;
         }
         .container {
-            max-width: 600px;
+            max-width: 500px;
             width: 100%;
-            margin: 0 auto;
             background-color: white;
-            padding: 30px;
+            padding: 10px;
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
         h1 {
-            color: #FF0000;
+            color: #333333;
             text-align: center;
-            margin-bottom: 20px;
-            font-size: 24px;
+            margin-bottom: 30px;
+            font-size: 28px;
         }
         #urlInput {
             width: 100%;
             padding: 12px;
-            margin-bottom: 15px;
-            border: 1px solid #ddd;
+            margin-bottom: 20px;
+            border: 2px solid #ddd;
             border-radius: 4px;
             font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+        #urlInput:focus {
+            outline: none;
+            border-color: #FF0000;
         }
         #checkButton {
             display: block;
@@ -54,29 +60,29 @@
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s, transform 0.1s;
             font-size: 16px;
             font-weight: bold;
         }
         #checkButton:hover {
             background-color: #CC0000;
         }
+        #checkButton:active {
+            transform: scale(0.98);
+        }
         #result {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #f1f1f1;
+            display: none;
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f8f8f8;
             border-radius: 4px;
             font-size: 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: opacity 0.3s ease;
         }
         @media (max-width: 480px) {
-            body {
-                padding: 10px;
-            }
-            .container {
-                padding: 20px;
-            }
             h1 {
-                font-size: 20px;
+                font-size: 24px;
             }
             #urlInput, #checkButton {
                 font-size: 14px;
@@ -86,7 +92,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>YouTube Publish Date Checker</h1>
+        <h1>YouTube Video Publish Date Checker</h1>
         <input type="text" id="urlInput" placeholder="Enter YouTube video URL">
         <button id="checkButton">Check Publish Date</button>
         <div id="result"></div>
@@ -94,17 +100,22 @@
 
     <script>
         document.getElementById('checkButton').addEventListener('click', checkPublishDate);
+        document.getElementById('urlInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkPublishDate();
+            }
+        });
 
         function checkPublishDate() {
             const url = document.getElementById('urlInput').value;
             const videoId = extractVideoId(url);
             
             if (!videoId) {
-                document.getElementById('result').innerHTML = 'Invalid YouTube URL';
+                showResult('Invalid YouTube URL');
                 return;
             }
 
-            document.getElementById('result').innerHTML = 'Loading...';
+            showResult('Loading...');
 
             fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=AIzaSyBp9BsANoPrMPRvmwxJ3Wv4UhEIrrxVLMc`)
                 .then(response => response.json())
@@ -112,21 +123,35 @@
                     if (data.items && data.items.length > 0) {
                         const publishedAt = data.items[0].snippet.publishedAt;
                         const kolkataTime = moment(publishedAt).tz('Asia/Kolkata').format('MMMM D, YYYY, h:mm:ss A');
-                        document.getElementById('result').innerHTML = `Publish Date (Kolkata Time):<br><strong>${kolkataTime}</strong>`;
+                        showResult(`<strong>Published On</strong><br>${kolkataTime}`);
                     } else {
-                        document.getElementById('result').innerHTML = 'Video not found';
+                        showResult('Video not found');
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    document.getElementById('result').innerHTML = 'An error occurred while fetching the data';
+                    showResult('An error occurred while fetching the data');
+                })
+                .finally(() => {
+                    document.getElementById('urlInput').value = '';
+                    document.getElementById('urlInput').focus();
                 });
         }
 
         function extractVideoId(url) {
-            const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+            const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(shorts\/)|(watch\?))\??v?=?([^#&?]*).*/;
             const match = url.match(regExp);
-            return (match && match[7].length == 11) ? match[7] : false;
+            return (match && match[8].length == 11) ? match[8] : false;
+        }
+
+        function showResult(message) {
+            const resultElement = document.getElementById('result');
+            resultElement.style.opacity = '0';
+            resultElement.style.display = 'block';
+            resultElement.innerHTML = message;
+            setTimeout(() => {
+                resultElement.style.opacity = '1';
+            }, 10);
         }
     </script>
 </body>
