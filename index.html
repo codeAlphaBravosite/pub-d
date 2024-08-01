@@ -7,6 +7,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.33/moment-timezone-with-data.min.js"></script>
     <style>
+        /* Your CSS styles here */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -106,8 +107,7 @@
 
             document.getElementById('result').innerHTML = 'Loading...';
 
-            // Fetch the YouTube API using the injected API key
-            fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${apiKey}`)
+            fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${process.env.YOUTUBE_API_KEY}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.items && data.items.length > 0) {
@@ -129,11 +129,6 @@
             const match = url.match(regExp);
             return (match && match[7].length == 11) ? match[7] : false;
         }
-    </script>
-
-    <script>
-        // This variable will be injected by GitHub Actions
-        const apiKey = ''; // API key will be injected here
     </script>
 </body>
 </html>
